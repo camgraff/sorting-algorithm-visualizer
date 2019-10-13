@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import Visualizer from './sorting-algorithm-visualizer';
+import Visualizer from './Visualizer';
 import * as serviceWorker from './serviceWorker';
 
 ReactDOM.render(<Visualizer />, document.getElementById('root'));
