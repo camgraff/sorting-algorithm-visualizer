@@ -5,3 +5,7 @@ canvas {
     top: 20%;
     margin: auto;
 }
+
+Button {
+    display: inline;
+}

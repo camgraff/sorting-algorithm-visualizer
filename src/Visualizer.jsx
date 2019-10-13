@@ -1,7 +1,9 @@
 import React from 'react';
+import Button from 'react-bootstrap/Button';
+import ButtonToolbar from 'react-bootstrap/Button';
 import './Visualizer.css'
 
-const ARRAY_SIZE = 20;
+const ARRAY_SIZE = 40;
 
 var arr = [];
 
@@ -20,10 +22,15 @@ class Visualizer extends React.Component {
 
     render() {
         return(
-            <canvas ref="canvas"
-                width={20*ARRAY_SIZE}
-                height={500}
-            />
+            <div className="Visualizer">
+                <ButtonToolbar>
+                    <Button variant="primary"> Sort </Button>
+                </ButtonToolbar>
+                <canvas ref="canvas"
+                    width={20*ARRAY_SIZE}
+                    height={500}
+                />
+            </div>
         )
     }
 
