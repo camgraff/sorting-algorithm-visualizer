@@ -14,18 +14,16 @@ class Visualizer extends React.Component {
         const canvas = this.refs.canvas
         const ctx = canvas.getContext("2d")
         arr.forEach( function(value, index) {
-            ctx.fillRect(20*(index+1),500-value,20,value);
+            ctx.fillRect(20*(index),canvas.height-value,20,value);
         });
     }
 
     render() {
         return(
-            <div>
-                <canvas ref="canvas"
-                    width={window.innerWidth}
-                    height={window.innerHeight}
-                />
-            </div>
+            <canvas ref="canvas"
+                width={20*ARRAY_SIZE}
+                height={500}
+            />
         )
     }
 
