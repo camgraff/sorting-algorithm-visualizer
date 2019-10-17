@@ -4,6 +4,10 @@ import './Visualizer.css'
 const ARRAY_SIZE = 50;
 const MAX_ARRAY_VAL = 1000;
 
+//percent of screen that array container div uses
+const HEIGHT_PROP = 60;
+const WIDTH_PROP = 60;
+
 class Visualizer extends React.Component {
     constructor(props) {
         super(props);
@@ -24,30 +28,36 @@ class Visualizer extends React.Component {
 
     selectionSort() {
         var temp = this.state.array;
-        if (i >= ARRAY_SIZE) return;
-        for (var i = 0; i<ARRAY_SIZE; i++) {
-            var min_id = i;  
-            for (var j = i+1; j<ARRAY_SIZE; j++) { 
-                if (temp[j] < temp[min_id])  
-                    min_id = j; 
-            }
-            temp[i] = temp.splice(min_id, 1, temp[i])[0];
+        var arrayBars = document.getElementsByClassName("array-bar");
+        for (let i = 0; i<ARRAY_SIZE; i++) {
+            setTimeout(() => {
+                var min_id = i;  
+                for (let j = i+1; j<ARRAY_SIZE; j++) { 
+                    if (temp[j] < temp[min_id])  
+                        min_id = j; 
+                }
+                arrayBars[i].style.height = `${temp[min_id]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`
+                arrayBars[i].style.backgroundColor = "green";
+                arrayBars[min_id].style.height = `${temp[i]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`
+                temp[i] = temp.splice(min_id, 1, temp[i])[0];
+            }, 100*i);
+
         }
-        this.setState({array:temp});
+        //this.setState({array:temp});
     }
 
     render() {
         return(
             <div className="container">
-                <button onClick={this.selectionSort}> Sort </button>
+                <button onClick={() => this.selectionSort()}> Sort </button>
                 {this.state.array.map((val, id) => (
                     <div 
                         className="array-bar"
                         key={id}
                         style={{
                             backgroundColor: "red",
-                            height: `${val/(MAX_ARRAY_VAL/60)}vh`,
-                            width: `${60/ARRAY_SIZE}vw`
+                            height: `${val/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`,
+                            width: `${WIDTH_PROP/ARRAY_SIZE}vw`
                         }}
                     ></div>
                 ))}
