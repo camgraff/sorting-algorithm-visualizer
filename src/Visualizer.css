@@ -1,12 +1,15 @@
-canvas {
-    position: absolute;
-    left: 0;
-    right: 0;
-    top: 20%;
-    margin: auto;
+button {
+    display: block;
 }
+.container {
+    text-align: center;
+    /*position: absolute;
+    /*left: 100px;
+    /* top: 100px; */
+  }
 
-ButtonToolbar {
-    display: flex;
-    justify-content: center;
-}
+.array-bar {
+    width: 2px;
+    display: inline-block;
+    margin: 0 1px;
+  }
