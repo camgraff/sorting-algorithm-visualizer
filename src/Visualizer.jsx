@@ -1,8 +1,8 @@
 import React from 'react';
 import './Visualizer.css'
 
-const ARRAY_SIZE = 40;
-const MAX_ARRAY_VAL = 500;
+const ARRAY_SIZE = 50;
+const MAX_ARRAY_VAL = 1000;
 
 class Visualizer extends React.Component {
     constructor(props) {
@@ -14,6 +14,7 @@ class Visualizer extends React.Component {
     }
 
     componentDidMount() {
+        //populate array values
         const temp = [];
         for (var i=0; i<ARRAY_SIZE; i++) {
             temp.push(Math.floor((Math.random()*MAX_ARRAY_VAL)));
@@ -33,7 +34,6 @@ class Visualizer extends React.Component {
             temp[i] = temp.splice(min_id, 1, temp[i])[0];
         }
         this.setState({array:temp});
-        //console.log(arr);
     }
 
     render() {
@@ -46,7 +46,8 @@ class Visualizer extends React.Component {
                         key={id}
                         style={{
                             backgroundColor: "red",
-                            height: `${val/(MAX_ARRAY_VAL/80)}vh`
+                            height: `${val/(MAX_ARRAY_VAL/60)}vh`,
+                            width: `${60/ARRAY_SIZE}vw`
                         }}
                     ></div>
                 ))}
@@ -55,14 +56,5 @@ class Visualizer extends React.Component {
     }
 
 }
-
-function sleep(milliseconds) {
-    var start = new Date().getTime();
-    for (var i = 0; i < 1e7; i++) {
-      if ((new Date().getTime() - start) > milliseconds){
-        break;
-      }
-    }
-  }
 
 export default Visualizer
