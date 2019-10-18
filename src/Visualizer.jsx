@@ -8,6 +8,9 @@ const MAX_ARRAY_VAL = 1000;
 const HEIGHT_PROP = 60;
 const WIDTH_PROP = 60;
 
+//timer used to cancel animations
+var timerIds = [];
+
 class Visualizer extends React.Component {
     constructor(props) {
         super(props);
@@ -29,6 +32,10 @@ class Visualizer extends React.Component {
     }
 
     generateArray() {
+        //stop the animation if called while sorting
+        timerIds.forEach(function(value) {clearTimeout(value)});
+
+        //populate array values
         const arr = [];
         for (var i=0; i<ARRAY_SIZE; i++) {
             arr.push(Math.floor((Math.random()*MAX_ARRAY_VAL)));
@@ -41,7 +48,7 @@ class Visualizer extends React.Component {
         var arrayBars = document.getElementsByClassName("array-bar");
         var prevMinId = 0;
         for (let i = 0; i<ARRAY_SIZE; i++) {
-            setTimeout(() => {
+            timerIds.push(setTimeout(() => {
                 var min_id = i;  
                 for (let j = i+1; j<ARRAY_SIZE; j++) { 
                     if (array[j] < array[min_id])  
@@ -59,7 +66,7 @@ class Visualizer extends React.Component {
                 arrayBars[i].style.backgroundColor = "blue";
                 //swap array values
                 array[i] = array.splice(min_id, 1, array[i])[0];
-            }, 50*i);
+            }, 50*i));
         }
     }
 
