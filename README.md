@@ -2,4 +2,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 # Sorting Algorithm Visualizer
 
-This project is a visualization tool for understanding how different sorting algorithms work. You can try out the visualizer by clicking [here](http://camgraff.github.io/sorting-visualizer-algorithm).
+This project is a visualization tool for understanding how different sorting algorithms work. You can try out the visualizer by clicking [here](http://camgraff.github.io/sorting-algorithm-visualizer).
