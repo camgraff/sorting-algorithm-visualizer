@@ -21,6 +21,7 @@ class Visualizer extends React.Component {
     }
 
     componentDidUpdate() {
+        //set bar colors back to red
         var arrayBars = document.getElementsByClassName("array-bar");
         for (var i=0; i<ARRAY_SIZE; i++) {
             arrayBars[i].style.backgroundColor = "red";
@@ -28,7 +29,6 @@ class Visualizer extends React.Component {
     }
 
     generateArray() {
-        //populate array values
         const arr = [];
         for (var i=0; i<ARRAY_SIZE; i++) {
             arr.push(Math.floor((Math.random()*MAX_ARRAY_VAL)));
@@ -61,7 +61,6 @@ class Visualizer extends React.Component {
                 array[i] = array.splice(min_id, 1, array[i])[0];
             }, 50*i);
         }
-        this.setState({sorted:true});
     }
 
     render() {
