@@ -12,12 +12,22 @@ class Visualizer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-          array: []
+          array: [],
         };
-        this.selectionSort = this.selectionSort.bind(this);
     }
 
     componentDidMount() {
+        this.generateArray();
+    }
+
+    componentDidUpdate() {
+        var arrayBars = document.getElementsByClassName("array-bar");
+        for (var i=0; i<ARRAY_SIZE; i++) {
+            arrayBars[i].style.backgroundColor = "red";
+        }
+    }
+
+    generateArray() {
         //populate array values
         const arr = [];
         for (var i=0; i<ARRAY_SIZE; i++) {
@@ -51,13 +61,16 @@ class Visualizer extends React.Component {
                 array[i] = array.splice(min_id, 1, array[i])[0];
             }, 50*i);
         }
-        //this.setState({array:temp});
+        this.setState({sorted:true});
     }
 
     render() {
         return(
             <div className="container">
-                <button onClick={() => this.selectionSort()}> Sort </button>
+                <div classname="button-container">
+                    <button onClick={() => this.selectionSort()}> Sort </button>
+                    <button onClick={() => this.generateArray()}> Generate New Array </button>
+                </div>
                 {this.state.array.map((val, id) => (
                     <div 
                         className="array-bar"

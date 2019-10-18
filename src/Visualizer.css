@@ -1,6 +1,6 @@
 button {
-    display: block;
-    margin: auto;
+    display: inline;
+    margin: 0px 5px 20px;
     background-color: turquoise;
     border: none;
     border-radius: 8px;
@@ -8,6 +8,11 @@ button {
     color: white;
     text-decoration: none;
     padding: 15px 28px;
+}
+
+.button-container {
+    display: block;
+    margin: auto;
 }
 
 .container {
