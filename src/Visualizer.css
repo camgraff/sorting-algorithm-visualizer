@@ -5,7 +5,7 @@ body {
 
 button {
     display: inline;
-    margin: 0px 5px 20px;
+    margin: 0px 5px 20px 1vw;
     background-color: turquoise;
     border: none;
     border-radius: 0px;
@@ -19,7 +19,6 @@ button {
 
 .button-container {
     display: block;
-    margin: auto;
 }
 
 .container {
@@ -39,11 +38,20 @@ button {
   }
 
   a {
-    background-color: grey;
     color: white;
     padding: 14px 25px;
     text-align: center;
     text-decoration: none;
-    position: absolute;
-    left: 2vw;
+    float: left;
+    margin-left: 1vw;
+    /* position: absolute;
+    left: 2vw; */
+  }
+
+  #back-button {
+    background-color: grey;
+  }
+
+  #gh-link {
+    background-color: black;
   }

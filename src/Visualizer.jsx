@@ -147,7 +147,8 @@ class Visualizer extends React.Component {
     render() {
         return(
             <div className="container">
-                <a href="https://camgraff.github.io">Back to camgraff.github.io</a>
+                <a href="https://camgraff.github.io" id="back-button">Back to camgraff.github.io</a>
+                <a href="https://github.com/camgraff/sorting-algorithm-visualizer" id="gh-link">View Code on Github</a>
                 <div className="button-container">
                     <button onClick={() => this.selectionSort()}> Selection Sort </button>
                     <button onClick= {() => this.quickSortHelper()}> Quick Sort </button>
