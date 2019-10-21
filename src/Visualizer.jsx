@@ -18,7 +18,7 @@ const START_COLOR = "red";
 const COMP_COLOR = "yellow";
 const FINISH_COLOR = "blue";
 
-var counter = 0;
+var animations = [];
 
 
 class Visualizer extends React.Component {
@@ -42,8 +42,8 @@ class Visualizer extends React.Component {
     }
 
     generateArray() {
-        //reset counter
-        counter = 0;
+        //reset animations
+        animations = [];
 
         //stop the animation if function is called while sorting
         timerIds.forEach(function(value) {clearTimeout(value)});
@@ -83,76 +83,8 @@ class Visualizer extends React.Component {
         }
     }
 
-    quickSort(arr, low, high, arrayBars, delay) {
-        var animations = []
-        
-        //TODO fix animations so left anf right play at the same time
-        var leftAnimations = [];
-        var RightAnimations = [];
-        var temp = arr;
-        /* //setTimeout(() => {
-            if (low < high) {
-                var pi = this.quickSortPartition(arr, low, high, arrayBars, delay);
-                this.quickSort(arr, low, pi-1, arrayBars, ANIMATION_SPEED*(pi-low+2)+delay);
-                this.quickSort(arr, pi+1, high, arrayBars, ANIMATION_SPEED*(pi-low+2)+delay);
-            }
-            //console.log(arr);
-        //}, 5000*counter); */
-
-        //iterative version, taken from https://www.geeksforgeeks.org/iterative-quick-sort/
-        var stack = [];
-        var top = -1;
-        stack[++top] = low;
-        stack[++top] = high;
-
-        // Keep popping from stack while is not empty 
-        while (top >= 0) {
-            // Pop h and l 
-            high = stack[top--]; 
-            low = stack[top--]; 
-
-            // Set pivot element at its correct position 
-            // in sorted array 
-            //var pivot = this.quickSortPartition(arr, low, high, arrayBars, delay); 
-
-            //parition
-            var pivot = arr[high];
-            var i = low - 1;
-            for (var j=low; j<high; j++) {
-                if (arr[j] < pivot) {
-                    i++;
-                    //setTimeout(() => {
-                        /* arrayBars[i].style.height = `${arr[j]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`;
-                        arrayBars[j].style.height = `${arr[i]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`; */
-                    //}, ANIMATION_SPEED*counter);
-                    animations.push([ [i, arr[i]], [j, arr[j]], 0 ]);
-                    counter++;
-                    arr[i] = arr.splice(j, 1, arr[i])[0];            }
-            }
-            //setTimeout(() => {
-                /* arrayBars[i+1].style.height = `${arr[high]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`;
-                arrayBars[high].style.height = `${arr[i+1]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`; */
-            //}, ANIMATION_SPEED*counter);
-            animations.push([ [i+1, arr[i+1]], [high, arr[high]], 1 ]);
-            arr[i+1] = arr.splice(high, 1, arr[i+1])[0];
-            pivot = i+1;
-
-
-            // If there are elements on left side of pivot, 
-            // then push left side to stack 
-            if (pivot - 1 >= low) { 
-                stack[++top] = low; 
-                stack[++top] = pivot - 1; 
-            } 
-
-            // If there are elements on right side of pivot, 
-            // then push right side to stack 
-            if (pivot + 1 <= high) { 
-                stack[++top] = pivot + 1; 
-                stack[++top] = high; 
-            } 
-        }
-
+    doAnimations() {
+        var arrayBars = document.getElementsByClassName("array-bar");
         var prevBar1;
         var prevBar2;
         var sorted = [];
@@ -177,24 +109,37 @@ class Visualizer extends React.Component {
                 prevBar1 = bar1;
                 prevBar2 = bar2;
             }, ANIMATION_SPEED*i));
-        }
+        } 
     }
 
-    quickSortPartition(arr, low, high, arrayBars) {
+    quickSortHelper() {
+        //stop the animation if function is called while sorting
+        timerIds.forEach(function(value) {clearTimeout(value)});
+        this.quickSort(this.state.array, 0, ARRAY_SIZE-1, 0);
+        this.doAnimations();
+    }
+
+    quickSortPartition(arr, low, high, counter) {
         var pivot = arr[high];
         var i = low - 1;
         for (var j=low; j<high; j++) {
             if (arr[j] < pivot) {
                 i++;
-                arrayBars[i].style.height = `${arr[j]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`;
-                arrayBars[j].style.height = `${arr[i]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`;
-                arr[i] = arr.splice(j, 1, arr[i])[0];            }
+                animations.push([ [i, arr[i]], [j, arr[j]], 0 ]);
+                arr[i] = arr.splice(j, 1, arr[i])[0];
+            }
         }
-        arrayBars[i+1].style.height = `${arr[high]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`;
-        arrayBars[i+1].style.backgroundColor = FINISH_COLOR;
-        arrayBars[high].style.height = `${arr[i+1]/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`;
+        animations.push([ [i+1, arr[i+1]], [high, arr[high]], 1 ]);
         arr[i+1] = arr.splice(high, 1, arr[i+1])[0];
         return i+1;
+    }
+
+    quickSort(arr, low, high, counter) {
+        if (low <= high) {
+            var pi = this.quickSortPartition(arr, low, high, counter);
+            this.quickSort(arr, low, pi-1, counter+1);
+            this.quickSort(arr, pi+1, high, counter+1);
+        }
     }
 
     render() {
@@ -202,7 +147,7 @@ class Visualizer extends React.Component {
             <div className="container">
                 <div classname="button-container">
                     <button onClick={() => this.selectionSort()}> Selection Sort </button>
-                    <button onClick={() => this.quickSort(this.state.array, 0, ARRAY_SIZE-1, document.getElementsByClassName("array-bar"))}> Quick Sort </button>
+                    <button onClick= {() => this.quickSortHelper()}> Quick Sort </button>
                     <button onClick={() => this.generateArray()}> Generate New Array </button>
                 </div>
                 {this.state.array.map((val, id) => (
