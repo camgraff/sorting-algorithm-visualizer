@@ -1,5 +1,7 @@
 import React from 'react';
 import './Visualizer.css'
+import {Link} from 'react-router-dom'
+import {BrowserRouter} from 'react-router-dom'
 
 const ARRAY_SIZE = 50;
 const MAX_ARRAY_VAL = 1000;
@@ -146,6 +148,11 @@ class Visualizer extends React.Component {
         return(
             <div className="container">
                 <div classname="button-container">
+                    <BrowserRouter>
+                    <Link to='/'>
+                        <button>Back to camgraff.github.io</button>
+                    </Link>
+                    </BrowserRouter>
                     <button onClick={() => this.selectionSort()}> Selection Sort </button>
                     <button onClick= {() => this.quickSortHelper()}> Quick Sort </button>
                     <button onClick={() => this.generateArray()}> Generate New Array </button>
