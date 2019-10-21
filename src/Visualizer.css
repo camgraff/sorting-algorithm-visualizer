@@ -26,3 +26,7 @@ button {
     display: inline-block;
     margin: 0 1px;
   }
+
+  a {
+    text-decoration: none;
+  }

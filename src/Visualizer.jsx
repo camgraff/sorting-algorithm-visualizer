@@ -149,7 +149,7 @@ class Visualizer extends React.Component {
             <div className="container">
                 <div classname="button-container">
                     <BrowserRouter>
-                    <Link to='/'>
+                    <Link to='/' onClick={this.forceUpdate}>
                         <button>Back to camgraff.github.io</button>
                     </Link>
                     </BrowserRouter>
