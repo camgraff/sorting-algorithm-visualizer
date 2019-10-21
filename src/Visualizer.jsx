@@ -3,7 +3,7 @@ import './Visualizer.css'
 import {Link} from 'react-router-dom'
 import {BrowserRouter} from 'react-router-dom'
 
-const ARRAY_SIZE = 50;
+const ARRAY_SIZE = 100;
 const MAX_ARRAY_VAL = 1000;
 
 //percent of screen that array container div uses
@@ -147,27 +147,25 @@ class Visualizer extends React.Component {
     render() {
         return(
             <div className="container">
-                <div classname="button-container">
-                    <BrowserRouter>
-                    <Link to='/' onClick={this.forceUpdate}>
-                        <button>Back to camgraff.github.io</button>
-                    </Link>
-                    </BrowserRouter>
+                <a href="https://camgraff.github.io">Back to camgraff.github.io</a>
+                <div className="button-container">
                     <button onClick={() => this.selectionSort()}> Selection Sort </button>
                     <button onClick= {() => this.quickSortHelper()}> Quick Sort </button>
                     <button onClick={() => this.generateArray()}> Generate New Array </button>
                 </div>
-                {this.state.array.map((val, id) => (
-                    <div 
-                        className="array-bar"
-                        key={id}
-                        style={{
-                            backgroundColor: START_COLOR,
-                            height: `${val/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`,
-                            width: `${WIDTH_PROP/ARRAY_SIZE}vw`
-                        }}
-                    ></div>
-                ))}
+                <div className="array-container">
+                    {this.state.array.map((val, id) => (
+                        <div 
+                            className="array-bar"
+                            key={id}
+                            style={{
+                                backgroundColor: START_COLOR,
+                                height: `${val/(MAX_ARRAY_VAL/HEIGHT_PROP)}vh`,
+                                width: `${WIDTH_PROP/ARRAY_SIZE}vw`
+                            }}
+                        ></div>
+                    ))}
+                </div>
             </div>
         )
     }
