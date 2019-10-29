@@ -4,54 +4,60 @@ body {
 }
 
 button {
-    display: inline;
-    margin: 0px 5px 20px 1vw;
-    background-color: turquoise;
-    border: none;
-    border-radius: 0px;
-    font-size: 20px;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-    color: white;
-    text-decoration: none;
-    padding: 15px 28px;
-    cursor:pointer;
+  display: inline;
+  margin: 0px 5px 20px 1vw;
+  background-color: turquoise;
+  border: 2px solid turquoise;
+  border-radius: 10px;
+  font-size: 20px;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  color: white;
+  text-decoration: none;
+  padding: 15px 28px;
+  cursor: pointer;
+}
+
+button:hover {
+  color: grey;
 }
 
 .button-container {
-    display: block;
+  display: block;
 }
 
 .container {
-    text-align: center;
-    margin-top: 5vh;
-    /*left: 100px;
+  text-align: center;
+  margin-top: 5vh;
+  /*left: 100px;
     top: 100px; */
-  }
+}
 
-  .array-container {
-    margin-top: 5vh;
-  }
+.array-container {
+  margin-top: 5vh;
+}
 
 .array-bar {
-    display: inline-block;
-    margin: 0 1px;
-  }
+  display: inline-block;
+  margin: 0 1px;
+}
 
-  a {
-    color: white;
-    padding: 14px 25px;
-    text-align: center;
-    text-decoration: none;
-    float: left;
-    margin-left: 1vw;
-    /* position: absolute;
+a {
+  color: white;
+  padding: 14px 25px;
+  text-align: center;
+  text-decoration: none;
+  float: left;
+  margin-left: 1vw;
+  /* position: absolute;
     left: 2vw; */
-  }
+  border-radius: 10px;
+}
 
-  #back-button {
-    background-color: grey;
-  }
 
-  #gh-link {
-    background-color: black;
-  }
+#gh-link, #back-button {
+  background-color: black;
+}
+
+a:hover {
+  color: grey;
+}
