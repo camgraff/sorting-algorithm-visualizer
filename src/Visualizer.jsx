@@ -25,7 +25,7 @@ class Visualizer extends React.Component {
     super(props);
     this.state = {
       array: [],
-      animationSpeed: 50
+      animationSpeed: 0.1
     };
   }
 
@@ -59,6 +59,11 @@ class Visualizer extends React.Component {
   }
 
   selectionSort() {
+    //stop the animation if function is called while sorting
+    timerIds.forEach(function(value) {
+      clearTimeout(value);
+    });
+
     var array = this.state.array;
     var arrayBars = document.getElementsByClassName("array-bar");
     var prevMinId = 0;
@@ -84,7 +89,7 @@ class Visualizer extends React.Component {
           arrayBars[i].style.backgroundColor = FINISH_COLOR;
           //swap array values
           array[i] = array.splice(min_id, 1, array[i])[0];
-        }, this.state.animationSpeed * i)
+        }, i / this.state.animationSpeed)
       );
     }
   }
@@ -119,7 +124,7 @@ class Visualizer extends React.Component {
           }
           prevBar1 = bar1;
           prevBar2 = bar2;
-        }, i*this.state.animationSpeed)
+        }, i / this.state.animationSpeed)
       );
     }
   }
@@ -162,6 +167,11 @@ class Visualizer extends React.Component {
   };
 
   handleAnimationSliderChange = value => {
+    animations = []
+    //stop the animation if function is called while sorting
+    timerIds.forEach(function(value) {
+      clearTimeout(value);
+    });
     this.setState({ animationSpeed: value });
   };
 
@@ -192,8 +202,10 @@ class Visualizer extends React.Component {
           <div className="slider">
             Animation Speed
             <Slider
-              min={5}
-              max={200}
+              min={0.01}
+              max={0.2}
+              step={0.001}
+              format={value => Math.floor(value*1000)}
               value={this.state.animationSpeed}
               orientation="horizontal"
               onChange={this.handleAnimationSliderChange}
