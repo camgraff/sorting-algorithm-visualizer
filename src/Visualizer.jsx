@@ -27,7 +27,7 @@ class Visualizer extends React.Component {
     super(props);
     this.state = {
       array: [],
-      animationSpeed: 0.1,
+      animationSpeed: 0.1
     };
   }
 
@@ -36,10 +36,13 @@ class Visualizer extends React.Component {
   }
 
   componentDidUpdate() {
-    //set bar colors back to red
+    let bgColor;
+    if (isSorted) bgColor = FINISH_COLOR;
+    else bgColor = START_COLOR;
+    //set bar colors back to red if unsorted
     var arrayBars = document.getElementsByClassName("array-bar");
     for (var i = 0; i < ARRAY_SIZE; i++) {
-      arrayBars[i].style.backgroundColor = START_COLOR;
+      arrayBars[i].style.backgroundColor = bgColor;
     }
   }
 
@@ -58,7 +61,7 @@ class Visualizer extends React.Component {
       arr.push(Math.floor(Math.random() * MAX_ARRAY_VAL));
     }
     isSorted = false;
-    this.setState({ array: arr});
+    this.setState({ array: arr });
   }
 
   selectionSort() {
@@ -123,7 +126,7 @@ class Visualizer extends React.Component {
           arrayBars[bar2[0]].style.height = `${bar1[1] /
             (MAX_ARRAY_VAL / HEIGHT_PROP)}vh`;
           arrayBars[bar2[0]].style.backgroundColor = COMP_COLOR;
-          if (isPiv == 1) {
+          if (isPiv === 1) {
             sorted.push(bar1[0]);
             arrayBars[bar1[0]].style.backgroundColor = FINISH_COLOR;
           }
@@ -140,7 +143,8 @@ class Visualizer extends React.Component {
     timerIds.forEach(function(value) {
       clearTimeout(value);
     });
-    this.quickSort(this.state.array, 0, ARRAY_SIZE - 1, 0);
+    var arr = this.state.array
+    this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
     this.doAnimations();
     isSorted = true;
   }
@@ -183,6 +187,7 @@ class Visualizer extends React.Component {
   };
 
   render() {
+    console.log(isSorted);
     return (
       <div className="container">
         <div className="button-container">
