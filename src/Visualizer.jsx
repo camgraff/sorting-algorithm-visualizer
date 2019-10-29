@@ -1,16 +1,14 @@
 import React from "react";
 import "./Visualizer.css";
 import Slider from "react-rangeslider";
-import 'react-rangeslider/lib/index.css'
+import "react-rangeslider/lib/index.css";
 
 var ARRAY_SIZE = 100;
 const MAX_ARRAY_VAL = 1000;
 
 //percent of screen that array container div uses
-const HEIGHT_PROP = 60;
+const HEIGHT_PROP = 80;
 const WIDTH_PROP = 60;
-
-const ANIMATION_SPEED = 50;
 
 //array of times used to cancel sorting animations
 var timerIds = [];
@@ -26,7 +24,8 @@ class Visualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      array: []
+      array: [],
+      animationSpeed: 50
     };
   }
 
@@ -85,7 +84,7 @@ class Visualizer extends React.Component {
           arrayBars[i].style.backgroundColor = FINISH_COLOR;
           //swap array values
           array[i] = array.splice(min_id, 1, array[i])[0];
-        }, ANIMATION_SPEED * i)
+        }, this.state.animationSpeed * i)
       );
     }
   }
@@ -120,7 +119,7 @@ class Visualizer extends React.Component {
           }
           prevBar1 = bar1;
           prevBar2 = bar2;
-        }, ANIMATION_SPEED * i)
+        }, i*this.state.animationSpeed)
       );
     }
   }
@@ -157,27 +156,49 @@ class Visualizer extends React.Component {
     }
   }
 
-  handleSliderChange = value => {
-      ARRAY_SIZE = value;
-      this.generateArray();
-    }
+  handleArraySliderChange = value => {
+    ARRAY_SIZE = value;
+    this.generateArray();
+  };
+
+  handleAnimationSliderChange = value => {
+    this.setState({ animationSpeed: value });
+  };
 
   render() {
     return (
       <div className="container">
         <div className="button-container">
-        <a href="https://camgraff.github.io" id="back-button">
-          Back to camgraff.github.io
-        </a>
-        <a
-          href="https://github.com/camgraff/sorting-algorithm-visualizer"
-          id="gh-link"
-        >
-          View Code on Github
-        </a>
-        <div className="slider"> Change Array Size
-        <Slider min={0} max={200} value={ARRAY_SIZE} orientation="horizontal" onChange={this.handleSliderChange} />
-        </div>
+          <a href="https://camgraff.github.io" id="back-button">
+            Back to camgraff.github.io
+          </a>
+          <a
+            href="https://github.com/camgraff/sorting-algorithm-visualizer"
+            id="gh-link"
+          >
+            View Code on Github
+          </a>
+          <div className="slider">
+            {" "}
+            Change Array Size
+            <Slider
+              min={5}
+              max={200}
+              value={ARRAY_SIZE}
+              orientation="horizontal"
+              onChange={this.handleArraySliderChange}
+            />
+          </div>
+          <div className="slider">
+            Change Animation Speed
+            <Slider
+              min={5}
+              max={200}
+              value={this.state.animationSpeed}
+              orientation="horizontal"
+              onChange={this.handleAnimationSliderChange}
+            />
+          </div>
           <button onClick={() => this.selectionSort()}> Selection Sort </button>
           <button onClick={() => this.quickSortHelper()}> Quick Sort </button>
           <button onClick={() => this.generateArray()}>

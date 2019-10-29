@@ -4,6 +4,7 @@ body {
 }
 
 button {
+  display: inline;
   margin-left: 1vw;
   background-color: turquoise;
   border: 2px solid turquoise;
@@ -12,9 +13,8 @@ button {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: white;
   text-decoration: none;
-  padding: 15px 28px;
+  padding: 1vh 1vh;
   cursor: pointer;
-  float: left;
 }
 
 button:hover {
@@ -22,13 +22,20 @@ button:hover {
 }
 
 .button-container {
-  display: inline;
+  width: 100%;
+  position: relative;
+  background-color: rgb(11, 158, 243);
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+
 }
 
 .container {
   text-align: center;
-  margin-top: 5vh;
-  /*left: 100px;
+/*   margin-top: 5vh;
+ */  /*left: 100px;
     top: 100px; */
 }
 
@@ -44,11 +51,11 @@ button:hover {
 
 a {
   color: white;
-  padding: 14px 25px;
+  padding: 1vh 1vh;
   text-align: center;
   text-decoration: none;
-  float: left;
-  margin-left: 1vw;
+/*   float: left;
+ */  margin-left: 1vw;
   /* position: absolute;
     left: 2vw; */
   border-radius: 10px;
@@ -65,7 +72,7 @@ a:hover {
 }
 
 .slider {
-  width: 10vw;
-  float: left;
-  margin-left: 10vw;
+  width: 12%;
+/*   float: left;
+ */  margin-left: 1vw;
 }
