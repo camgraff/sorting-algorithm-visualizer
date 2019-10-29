@@ -178,12 +178,12 @@ class Visualizer extends React.Component {
   };
 
   handleAnimationSliderChange = value => {
-    animations = [];
     //stop the animation if function is called while sorting
     timerIds.forEach(function(value) {
       clearTimeout(value);
     });
     this.setState({ animationSpeed: value });
+    if (isSorted) this.generateArray();
   };
 
   render() {
