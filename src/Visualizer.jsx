@@ -20,12 +20,14 @@ const FINISH_COLOR = "blue";
 
 var animations = [];
 
+var isSorted = false;
+
 class Visualizer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       array: [],
-      animationSpeed: 0.1
+      animationSpeed: 0.1,
     };
   }
 
@@ -55,10 +57,12 @@ class Visualizer extends React.Component {
     for (var i = 0; i < ARRAY_SIZE; i++) {
       arr.push(Math.floor(Math.random() * MAX_ARRAY_VAL));
     }
-    this.setState({ array: arr });
+    isSorted = false;
+    this.setState({ array: arr});
   }
 
   selectionSort() {
+    if (isSorted) return;
     //stop the animation if function is called while sorting
     timerIds.forEach(function(value) {
       clearTimeout(value);
@@ -92,6 +96,7 @@ class Visualizer extends React.Component {
         }, i / this.state.animationSpeed)
       );
     }
+    isSorted = true;
   }
 
   doAnimations() {
@@ -130,15 +135,17 @@ class Visualizer extends React.Component {
   }
 
   quickSortHelper() {
+    if (isSorted) return;
     //stop the animation if function is called while sorting
     timerIds.forEach(function(value) {
       clearTimeout(value);
     });
     this.quickSort(this.state.array, 0, ARRAY_SIZE - 1, 0);
     this.doAnimations();
+    isSorted = true;
   }
 
-  quickSortPartition(arr, low, high, counter) {
+  quickSortPartition(arr, low, high) {
     var pivot = arr[high];
     var i = low - 1;
     for (var j = low; j < high; j++) {
@@ -167,7 +174,7 @@ class Visualizer extends React.Component {
   };
 
   handleAnimationSliderChange = value => {
-    animations = []
+    animations = [];
     //stop the animation if function is called while sorting
     timerIds.forEach(function(value) {
       clearTimeout(value);
@@ -205,7 +212,7 @@ class Visualizer extends React.Component {
               min={0.01}
               max={0.2}
               step={0.001}
-              format={value => Math.floor(value*1000)}
+              format={value => Math.floor(value * 1000)}
               value={this.state.animationSpeed}
               orientation="horizontal"
               onChange={this.handleAnimationSliderChange}
