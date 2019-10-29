@@ -180,7 +180,7 @@ class Visualizer extends React.Component {
           </a>
           <div className="slider">
             {" "}
-            Change Array Size
+            Array Size
             <Slider
               min={5}
               max={200}
@@ -190,7 +190,7 @@ class Visualizer extends React.Component {
             />
           </div>
           <div className="slider">
-            Change Animation Speed
+            Animation Speed
             <Slider
               min={5}
               max={200}
