@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1078fd8f5dc6ba654b78a2c560093d65",
+    "revision": "36dc5aaa041400f0e07fca114be1c23e",
     "url": "/sorting-algorithm-visualizer/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/sorting-algorithm-visualizer/static/css/2.b8d7bdcb.chunk.css"
   },
   {
-    "revision": "da6d8aded5be41323a4b",
+    "revision": "75f6a6112fbafa15a8c3",
     "url": "/sorting-algorithm-visualizer/static/css/main.3684d456.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/sorting-algorithm-visualizer/static/js/2.3516c94c.chunk.js"
   },
   {
-    "revision": "da6d8aded5be41323a4b",
-    "url": "/sorting-algorithm-visualizer/static/js/main.733e079c.chunk.js"
+    "revision": "75f6a6112fbafa15a8c3",
+    "url": "/sorting-algorithm-visualizer/static/js/main.abb79bea.chunk.js"
   },
   {
     "revision": "f75cd247a3b93fde8b45",
