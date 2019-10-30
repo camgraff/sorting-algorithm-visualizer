@@ -110,7 +110,7 @@ class Visualizer extends React.Component {
     var prevBar1;
     var prevBar2;
     var sorted = [];
-    //animations
+    //animations are of the form [[index1, value1], [index2, value2], isPivot]
     for (let i = 0; i < animations.length; i++) {
       timerIds.push(
         setTimeout(() => {
@@ -175,6 +175,23 @@ class Visualizer extends React.Component {
     }
   }
 
+  bubbleSort() {
+    var array = this.state.array;
+    for (let i = 0; i < ARRAY_SIZE - 1; i++) {
+      for (let j = 0; j < ARRAY_SIZE - i - 1; j++) {
+        if (j + 1 == ARRAY_SIZE - i - 1)
+          animations.push([[j + 1, array[j + 1]], [j, array[j]], 1]);
+        else animations.push([[j + 1, array[j + 1]], [j, array[j]], 0]);
+
+        if (array[j] > array[j + 1])
+          array[j] = array.splice(j + 1, 1, array[j])[0];
+      }
+    }
+    animations.push([[0, array[0]], [0, array[0]], 1]);   //need this line since last element must already be in sorted position
+    isSorted = true;
+    this.doAnimations();
+  }
+
   handleArraySliderChange = value => {
     ARRAY_SIZE = value;
     this.generateArray();
@@ -190,7 +207,6 @@ class Visualizer extends React.Component {
   };
 
   handleDropdownChange = event => {
-    console.log(event);
     this.setState({ algorithm: event.value });
     if (isSorted) this.generateArray();
   };
@@ -198,7 +214,8 @@ class Visualizer extends React.Component {
   render() {
     const dropdownOptions = [
       { value: "selection", label: "Selection Sort" },
-      { value: "quick", label: "Quick Sort" }
+      { value: "quick", label: "Quick Sort" },
+      { value: "bubble", label: "Bubble Sort" }
     ];
     return (
       <div className="container">
@@ -249,8 +266,13 @@ class Visualizer extends React.Component {
               switch (this.state.algorithm) {
                 case "selection":
                   this.selectionSort();
+                  break;
                 case "quick":
                   this.quickSortHelper();
+                  break;
+                case "bubble":
+                  this.bubbleSort();
+                  break;
               }
             }}
           >

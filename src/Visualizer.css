@@ -4,7 +4,6 @@ body {
 }
 
 button {
-  display: inline;
   margin-left: 1vw;
   background-color: turquoise;
   border: 2px solid turquoise;
