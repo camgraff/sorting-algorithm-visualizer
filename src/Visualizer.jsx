@@ -9,7 +9,7 @@ var ARRAY_SIZE = 100;
 const MAX_ARRAY_VAL = 1000;
 
 //percent of screen that array container div uses
-const HEIGHT_PROP = 80;
+const HEIGHT_PROP = 70;
 const WIDTH_PROP = 60;
 
 //array of times used to cancel sorting animations

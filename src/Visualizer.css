@@ -4,7 +4,6 @@ body {
 }
 
 button {
-  margin-left: 1vw;
   background-color: turquoise;
   border: 2px solid turquoise;
   border-radius: 10px;
@@ -12,7 +11,7 @@ button {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   color: white;
   text-decoration: none;
-  padding: 1vh 1vh;
+  padding: 1% 1%;
   cursor: pointer;
 }
 
@@ -31,11 +30,12 @@ button:hover {
   padding-top: 1%;
 }
 
+.button-container * {
+  margin: 10px;
+}
+
 .container {
   text-align: center;
-/*   margin-top: 5vh;
- */  /*left: 100px;
-    top: 100px; */
 }
 
 .array-container {
@@ -53,18 +53,13 @@ a {
   padding: 1vh 1vh;
   text-align: center;
   text-decoration: none;
-/*   float: left;
- */  margin-left: 1vw;
-  /* position: absolute;
-    left: 2vw; */
   border-radius: 10px;
   font-size: 20px;
 }
 
 .dropdown {
-  width: 15%;
-  margin-left: 1vw;
-}
+   width: 15%;
+ }
 
 #gh-link {
   background-color: black;
@@ -78,7 +73,18 @@ a:hover {
 }
 
 .slider {
-  width: 12%;
-/*   float: left;
- */  margin-left: 1vw;
+  width: 15%;
+}
+
+@media only screen and (max-width: 850px) {
+  .button-container {
+    flex-direction: column;
+  }
+
+  .button-container * {
+    margin: 1vh;
+  }
+  .slider, .dropdown {
+    width: 50%;
+  }
 }
