@@ -2,6 +2,8 @@ import React from "react";
 import "./Visualizer.css";
 import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
 
 var ARRAY_SIZE = 100;
 const MAX_ARRAY_VAL = 1000;
@@ -27,7 +29,8 @@ class Visualizer extends React.Component {
     super(props);
     this.state = {
       array: [],
-      animationSpeed: 0.1
+      animationSpeed: 0.1,
+      algorithm: ""
     };
   }
 
@@ -143,7 +146,7 @@ class Visualizer extends React.Component {
     timerIds.forEach(function(value) {
       clearTimeout(value);
     });
-    var arr = this.state.array
+    var arr = this.state.array;
     this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
     this.doAnimations();
     isSorted = true;
@@ -186,8 +189,17 @@ class Visualizer extends React.Component {
     if (isSorted) this.generateArray();
   };
 
+  handleDropdownChange = event => {
+    console.log(event);
+    this.setState({ algorithm: event.value });
+    if (isSorted) this.generateArray();
+  };
+
   render() {
-    console.log(isSorted);
+    const dropdownOptions = [
+      { value: "selection", label: "Selection Sort" },
+      { value: "quick", label: "Quick Sort" }
+    ];
     return (
       <div className="container">
         <div className="button-container">
@@ -223,11 +235,31 @@ class Visualizer extends React.Component {
               onChange={this.handleAnimationSliderChange}
             />
           </div>
-          <button onClick={() => this.selectionSort()}> Selection Sort </button>
-          <button onClick={() => this.quickSortHelper()}> Quick Sort </button>
+          <div className="dropdown">
+            <Dropdown
+              value={this.state.algorithm}
+              ref="algorithm"
+              options={dropdownOptions}
+              placeholder="Select a sorting algorithm"
+              onChange={this.handleDropdownChange}
+            />
+          </div>
+          <button
+            onClick={() => {
+              switch (this.state.algorithm) {
+                case "selection":
+                  this.selectionSort();
+                case "quick":
+                  this.quickSortHelper();
+              }
+            }}
+          >
+            Sort
+          </button>
+          {/* <button onClick={() => this.selectionSort()}> Selection Sort </button>
+          <button onClick={() => this.quickSortHelper()}> Quick Sort </button> */}
           <button onClick={() => this.generateArray()}>
-            {" "}
-            Generate New Array{" "}
+            Generate New Array
           </button>
         </div>
         <div className="array-container">
