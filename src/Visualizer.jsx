@@ -179,7 +179,7 @@ class Visualizer extends React.Component {
     var array = this.state.array;
     for (let i = 0; i < ARRAY_SIZE - 1; i++) {
       for (let j = 0; j < ARRAY_SIZE - i - 1; j++) {
-        if (j + 1 == ARRAY_SIZE - i - 1)
+        if (j + 1 === ARRAY_SIZE - i - 1)
           animations.push([[j + 1, array[j + 1]], [j, array[j]], 1]);
         else animations.push([[j + 1, array[j + 1]], [j, array[j]], 0]);
 
@@ -273,6 +273,8 @@ class Visualizer extends React.Component {
                 case "bubble":
                   this.bubbleSort();
                   break;
+                default:
+
               }
             }}
           >
