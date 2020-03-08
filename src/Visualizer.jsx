@@ -12,6 +12,9 @@ const MAX_ARRAY_VAL = 1000;
 const HEIGHT_PROP = 70;
 const WIDTH_PROP = 60;
 
+//array of times used to cancel sorting animations
+var timerIds = [];
+
 //bar colors
 const START_COLOR = "red";
 const COMP_COLOR = "yellow";
@@ -19,15 +22,11 @@ const FINISH_COLOR = "blue";
 
 var animations = [];
 
+var isSorted = false;
+
 class Visualizer extends React.Component {
     constructor(props) {
         super(props);
-
-        this.isSorted = false;
-        this.isSorting = false;
-        // Timer Ids used to cancel sorting animation
-        this.timerIds = [];
-
         this.state = {
             array: [],
             animationSpeed: 0.1,
@@ -40,14 +39,14 @@ class Visualizer extends React.Component {
     }
 
     componentDidUpdate() {
-        /* let bgColor;
-        if (this.isSorted) bgColor = FINISH_COLOR;
+        let bgColor;
+        if (isSorted) bgColor = FINISH_COLOR;
         else bgColor = START_COLOR;
         //set bar colors back to red if unsorted
-        //var arrayBars = document.getElementsByClassName("array-bar");
+        var arrayBars = document.getElementsByClassName("array-bar");
         for (var i = 0; i < ARRAY_SIZE; i++) {
             arrayBars[i].style.backgroundColor = bgColor;
-        } */
+        }
     }
 
     generateArray() {
@@ -55,28 +54,23 @@ class Visualizer extends React.Component {
         animations = [];
 
         //stop the animation if function is called while sorting
-        this.timerIds.forEach(function(value) {
+        timerIds.forEach(function(value) {
             clearTimeout(value);
         });
 
         //populate array values
-        let arr = [];
+        const arr = [];
         for (var i = 0; i < ARRAY_SIZE; i++) {
-            arr.push({
-                value: Math.floor(Math.random() * MAX_ARRAY_VAL),
-                color: START_COLOR
-            });
+            arr.push(Math.floor(Math.random() * MAX_ARRAY_VAL));
         }
-        this.isSorted = false;
-        this.setState({
-            array: arr
-        });
+        isSorted = false;
+        this.setState({ array: arr });
     }
 
     selectionSort() {
-        if (this.isSorted) return;
+        if (isSorted) return;
         //stop the animation if function is called while sorting
-        this.timerIds.forEach(function(value) {
+        timerIds.forEach(function(value) {
             clearTimeout(value);
         });
 
@@ -84,7 +78,7 @@ class Visualizer extends React.Component {
         var arrayBars = document.getElementsByClassName("array-bar");
         var prevMinId = 0;
         for (let i = 0; i < ARRAY_SIZE; i++) {
-            this.timerIds.push(
+            timerIds.push(
                 setTimeout(() => {
                     var min_id = i;
                     for (let j = i + 1; j < ARRAY_SIZE; j++) {
@@ -105,7 +99,7 @@ class Visualizer extends React.Component {
                 }, i / this.state.animationSpeed)
             );
         }
-        this.isSorted = true;
+        isSorted = true;
     }
 
     doAnimations() {
@@ -115,7 +109,7 @@ class Visualizer extends React.Component {
         var sorted = [];
         //animations are of the form [[index1, value1], [index2, value2], isPivot]
         for (let i = 0; i < animations.length; i++) {
-            this.timerIds.push(
+            timerIds.push(
                 setTimeout(() => {
                     if (i > 0) {
                         if (!sorted.includes(prevBar1[0])) arrayBars[prevBar1[0]].style.backgroundColor = START_COLOR;
@@ -140,15 +134,15 @@ class Visualizer extends React.Component {
     }
 
     quickSortHelper() {
-        if (this.isSorted) return;
+        if (isSorted) return;
         //stop the animation if function is called while sorting
-        this.timerIds.forEach(function(value) {
+        timerIds.forEach(function(value) {
             clearTimeout(value);
         });
         var arr = this.state.array;
         this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
         this.doAnimations();
-        this.isSorted = true;
+        isSorted = true;
     }
 
     quickSortPartition(arr, low, high) {
@@ -175,59 +169,22 @@ class Visualizer extends React.Component {
     }
 
     bubbleSort() {
-        let array = this.state.array;
-        let animationCount = 0;
-        this.isSorting = true;
-
+        var array = this.state.array;
         for (let i = 0; i < ARRAY_SIZE - 1; i++) {
             for (let j = 0; j < ARRAY_SIZE - i - 1; j++) {
-                this.timerIds.push(
-                    setTimeout(() => {
-                        // Swap elements j and j+1 if needed
-                        if (array[j].value > array[j + 1].value) {
-                            array[j] = array.splice(j + 1, 1, array[j])[0];
-                        }
+                if (j + 1 === ARRAY_SIZE - i - 1) animations.push([[j + 1, array[j + 1]], [j, array[j]], 1]);
+                else animations.push([[j + 1, array[j + 1]], [j, array[j]], 0]);
 
-                        //Handle animations
-                        array[j].color = COMP_COLOR;
-                        if (j + 1 === ARRAY_SIZE - i - 1) {
-                            array[j + 1].color = FINISH_COLOR;
-                        } else {
-                            array[j + 1].color = COMP_COLOR;
-                        }
-
-                        this.setState({
-                            array: array
-                        });
-
-                        array[j].color = START_COLOR;
-                        if (j + 1 < ARRAY_SIZE - i - 1) {
-                            array[j + 1].color = START_COLOR;
-                        }
-
-                        // Edge case for after every element has been sorted
-                        if (i === ARRAY_SIZE - 2) {
-                            array[0].color = FINISH_COLOR;
-                            this.setState({
-                                array: array
-                            });
-                            this.isSorting = false;
-                        }
-                    }, animationCount++ / this.state.animationSpeed)
-                );
+                if (array[j] > array[j + 1]) array[j] = array.splice(j + 1, 1, array[j])[0];
             }
         }
-    }
 
-    runAnimations() {
-        var arrayBars = document.getElementsByClassName("array-bar");
-        animations.forEach((animation, i) => {
-            setTimeout(() => {
-                animation.forEach(el => {
-                    arrayBars[el.idx].style.backgroundColor = el.color;
-                });
-            }, i / this.state.animationSpeed);
-        });
+        //need this line since last element must already be in sorted position,
+        //but the above loop will not add it to animations
+        animations.push([[0, array[0]], [0, array[0]], 1]);
+
+        isSorted = true;
+        this.doAnimations();
     }
 
     handleArraySliderChange = value => {
@@ -236,19 +193,20 @@ class Visualizer extends React.Component {
     };
 
     handleAnimationSliderChange = value => {
-        // If called while sorting, stop animations and generate a new array
-        if (this.isSorting) {
-            this.timerIds.forEach(function(value) {
-                clearTimeout(value);
-            });
-            this.generateArray();
-        }
+        //stop the animation if function is called while sorting
+        timerIds.forEach(function(value) {
+            clearTimeout(value);
+        });
         this.setState({ animationSpeed: value });
+
+        //if called in the middle of an animation, we create a new array
+        //might want to change this in future, but probably need to make a new component to avoid rerender
+        if (isSorted) this.generateArray();
     };
 
     handleDropdownChange = event => {
         this.setState({ algorithm: event.value });
-        if (this.isSorted) this.generateArray();
+        if (isSorted) this.generateArray();
     };
 
     render() {
@@ -276,12 +234,6 @@ class Visualizer extends React.Component {
                         <li>
                             <button
                                 onClick={() => {
-                                    // If already sorting, do nothing
-                                    /*  if (this.isSorting) {
-                                        return;
-                                    } else {
-                                        this.isSorting = true;
-                                    } */
                                     switch (this.state.algorithm) {
                                         case "selection":
                                             this.selectionSort();
@@ -316,13 +268,13 @@ class Visualizer extends React.Component {
                 </nav>
 
                 <div className="array-container">
-                    {this.state.array.map((el, id) => (
+                    {this.state.array.map((val, id) => (
                         <div
                             className="array-bar"
                             key={id}
                             style={{
-                                backgroundColor: el.color,
-                                height: `${el.value / (MAX_ARRAY_VAL / HEIGHT_PROP)}vh`,
+                                backgroundColor: START_COLOR,
+                                height: `${val / (MAX_ARRAY_VAL / HEIGHT_PROP)}vh`,
                                 width: `${WIDTH_PROP / ARRAY_SIZE}vw`
                             }}
                         ></div>
