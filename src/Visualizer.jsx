@@ -222,11 +222,11 @@ class Visualizer extends React.Component {
                         <li className="slider">
                             {" "}
                             Array Size
-                            <Slider min={5} max={200} value={ARRAY_SIZE} orientation="horizontal" onChange={this.handleArraySliderChange} />
+                            <Slider min={5} max={200} value={ARRAY_SIZE} orientation="horizontal" onChange={this.handleArraySliderChange} tooltip={false} />
                         </li>
                         <li className="slider">
                             Animation Speed
-                            <Slider min={0.01} max={0.2} step={0.001} format={value => Math.floor(value * 1000)} value={this.state.animationSpeed} orientation="horizontal" onChange={this.handleAnimationSliderChange} />
+                            <Slider min={0.01} max={0.2} step={0.001} format={value => Math.floor(value * 1000)} value={this.state.animationSpeed} orientation="horizontal" onChange={this.handleAnimationSliderChange} tooltip={false} />
                         </li>
                         <li className="dropdown">
                             <Dropdown value={this.state.algorithm} ref="algorithm" options={dropdownOptions} placeholder="Select a sorting algorithm" onChange={this.handleDropdownChange} />
