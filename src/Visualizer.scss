@@ -1,0 +1,67 @@
+.visualizer {
+    nav {
+        background-color: #6da1bf;
+        ul {
+            margin: 0;
+            list-style-type: none;
+            padding: 0;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            li {
+                display: inline-block;
+                text-align: center;
+                margin-top: 5px;
+                a {
+                    text-decoration: underline;
+                    color: white;
+                    &:hover {
+                        color: lightgray;
+                    }
+                }
+                button {
+                    border: none;
+                    background: none;
+                    font-size: inherit;
+                    cursor: pointer;
+                    color: white;
+                    &:hover {
+                        color: lightgray;
+                    }
+                }
+                &.dropdown {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+    .array-container {
+        text-align: center;
+        margin-top: 5%;
+        overflow: hidden;
+        clear: both;
+    }
+}
+
+
+.array-bar {
+    display: inline-block;
+    margin: 0 1px;
+}
+
+.dropdown {
+    width: 15%;
+}
+
+
+
+.slider {
+    width: 15%;
+}
+
+@media only screen and (max-width: 850px) {
+    .slider,
+    .dropdown {
+        width: 50%;
+    }
+}
