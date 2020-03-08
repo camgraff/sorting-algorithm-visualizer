@@ -231,8 +231,10 @@ class Visualizer extends React.Component {
     }
 
     handleArraySliderChange = value => {
-        ARRAY_SIZE = value;
-        this.generateArray();
+        if (value != ARRAY_SIZE) {
+            ARRAY_SIZE = value;
+            this.generateArray();
+        }
     };
 
     handleAnimationSliderChange = value => {
