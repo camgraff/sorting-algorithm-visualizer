@@ -4,6 +4,7 @@ import Slider from "react-rangeslider";
 import "react-rangeslider/lib/index.css";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
+var _ = require("lodash");
 
 var ARRAY_SIZE = 100;
 const MAX_ARRAY_VAL = 1000;
@@ -16,8 +17,7 @@ const WIDTH_PROP = 60;
 const START_COLOR = "red";
 const COMP_COLOR = "yellow";
 const FINISH_COLOR = "blue";
-
-var animations = [];
+const PIVOT_COLOR = "green";
 
 class Visualizer extends React.Component {
     constructor(props) {
@@ -27,6 +27,7 @@ class Visualizer extends React.Component {
         this.isSorting = false;
         // Timer Ids used to cancel sorting animation
         this.timerIds = [];
+        this.animationCount = 0;
 
         this.state = {
             array: [],
@@ -39,27 +40,15 @@ class Visualizer extends React.Component {
         this.generateArray();
     }
 
-    componentDidUpdate() {
-        /* let bgColor;
-        if (this.isSorted) bgColor = FINISH_COLOR;
-        else bgColor = START_COLOR;
-        //set bar colors back to red if unsorted
-        //var arrayBars = document.getElementsByClassName("array-bar");
-        for (var i = 0; i < ARRAY_SIZE; i++) {
-            arrayBars[i].style.backgroundColor = bgColor;
-        } */
-    }
-
     generateArray() {
-        //reset animations
-        animations = [];
-
-        //stop the animation if function is called while sorting
+        // Stop any animations currently running
         this.timerIds.forEach(function(value) {
             clearTimeout(value);
         });
+        this.timerIds = [];
+        this.animationCount = 0;
 
-        //populate array values
+        // Populate the array
         let arr = [];
         for (var i = 0; i < ARRAY_SIZE; i++) {
             arr.push({
@@ -68,190 +57,149 @@ class Visualizer extends React.Component {
             });
         }
         this.isSorted = false;
+        this.isSorting = false;
         this.setState({
             array: arr
         });
     }
 
-    selectionSort() {
-        if (this.isSorted) return;
-        //stop the animation if function is called while sorting
-        this.timerIds.forEach(function(value) {
-            clearTimeout(value);
-        });
-
-        var array = this.state.array;
-        var arrayBars = document.getElementsByClassName("array-bar");
-        var prevMinId = 0;
-        for (let i = 0; i < ARRAY_SIZE; i++) {
-            this.timerIds.push(
-                setTimeout(() => {
-                    var min_id = i;
-                    for (let j = i + 1; j < ARRAY_SIZE; j++) {
-                        if (array[j] < array[min_id]) min_id = j;
-                    }
-
-                    //recolor previous yellow bar back to red since no longer being swapped
-                    if (prevMinId > i) arrayBars[prevMinId].style.backgroundColor = START_COLOR;
-                    prevMinId = min_id;
-                    //color bar that is being swapped yellow
-                    arrayBars[min_id].style.height = `${array[i] / (MAX_ARRAY_VAL / HEIGHT_PROP)}vh`;
-                    arrayBars[min_id].style.backgroundColor = COMP_COLOR;
-                    //color minimum value bar blue since it will be in sorted order
-                    arrayBars[i].style.height = `${array[min_id] / (MAX_ARRAY_VAL / HEIGHT_PROP)}vh`;
-                    arrayBars[i].style.backgroundColor = FINISH_COLOR;
-                    //swap array values
-                    array[i] = array.splice(min_id, 1, array[i])[0];
-                }, i / this.state.animationSpeed)
-            );
-        }
-        this.isSorted = true;
-    }
-
-    doAnimations() {
-        var arrayBars = document.getElementsByClassName("array-bar");
-        var prevBar1;
-        var prevBar2;
-        var sorted = [];
-        //animations are of the form [[index1, value1], [index2, value2], isPivot]
-        for (let i = 0; i < animations.length; i++) {
-            this.timerIds.push(
-                setTimeout(() => {
-                    if (i > 0) {
-                        if (!sorted.includes(prevBar1[0])) arrayBars[prevBar1[0]].style.backgroundColor = START_COLOR;
-                        if (!sorted.includes(prevBar2[0])) arrayBars[prevBar2[0]].style.backgroundColor = START_COLOR;
-                    }
-                    const bar1 = animations[i][0];
-                    const bar2 = animations[i][1];
-                    const isPiv = animations[i][2];
-                    arrayBars[bar1[0]].style.height = `${bar2[1] / (MAX_ARRAY_VAL / HEIGHT_PROP)}vh`;
-                    arrayBars[bar1[0]].style.backgroundColor = COMP_COLOR;
-                    arrayBars[bar2[0]].style.height = `${bar1[1] / (MAX_ARRAY_VAL / HEIGHT_PROP)}vh`;
-                    arrayBars[bar2[0]].style.backgroundColor = COMP_COLOR;
-                    if (isPiv === 1) {
-                        sorted.push(bar1[0]);
-                        arrayBars[bar1[0]].style.backgroundColor = FINISH_COLOR;
-                    }
-                    prevBar1 = bar1;
-                    prevBar2 = bar2;
-                }, i / this.state.animationSpeed)
-            );
-        }
-    }
-
-    quickSortHelper() {
-        if (this.isSorted) return;
-        //stop the animation if function is called while sorting
-        this.timerIds.forEach(function(value) {
-            clearTimeout(value);
-        });
-        var arr = this.state.array;
-        this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
-        this.doAnimations();
-        this.isSorted = true;
-    }
-
-    quickSortPartition(arr, low, high) {
-        var pivot = arr[high];
-        var i = low - 1;
-        for (var j = low; j < high; j++) {
-            if (arr[j] < pivot) {
-                i++;
-                animations.push([[i, arr[i]], [j, arr[j]], 0]);
-                arr[i] = arr.splice(j, 1, arr[i])[0];
-            }
-        }
-        animations.push([[i + 1, arr[i + 1]], [high, arr[high]], 1]);
-        arr[i + 1] = arr.splice(high, 1, arr[i + 1])[0];
-        return i + 1;
-    }
-
-    quickSort(arr, low, high, counter) {
-        if (low <= high) {
-            var pi = this.quickSortPartition(arr, low, high, counter);
-            this.quickSort(arr, low, pi - 1, counter + 1);
-            this.quickSort(arr, pi + 1, high, counter + 1);
-        }
-    }
-
-    bubbleSort() {
-        let array = this.state.array;
-        let animationCount = 0;
-        this.isSorting = true;
-
-        for (let i = 0; i < ARRAY_SIZE - 1; i++) {
-            for (let j = 0; j < ARRAY_SIZE - i - 1; j++) {
-                this.timerIds.push(
-                    setTimeout(() => {
-                        // Swap elements j and j+1 if needed
-                        if (array[j].value > array[j + 1].value) {
-                            array[j] = array.splice(j + 1, 1, array[j])[0];
-                        }
-
-                        //Handle animations
-                        array[j].color = COMP_COLOR;
-                        if (j + 1 === ARRAY_SIZE - i - 1) {
-                            array[j + 1].color = FINISH_COLOR;
-                        } else {
-                            array[j + 1].color = COMP_COLOR;
-                        }
-
-                        this.setState({
-                            array: array
-                        });
-
-                        array[j].color = START_COLOR;
-                        if (j + 1 < ARRAY_SIZE - i - 1) {
-                            array[j + 1].color = START_COLOR;
-                        }
-
-                        // Edge case for after every element has been sorted
-                        if (i === ARRAY_SIZE - 2) {
-                            array[0].color = FINISH_COLOR;
-                            this.setState({
-                                array: array
-                            });
-                            this.isSorting = false;
-                        }
-                    }, animationCount++ / this.state.animationSpeed)
-                );
-            }
-        }
-    }
-
-    runAnimations() {
-        var arrayBars = document.getElementsByClassName("array-bar");
-        animations.forEach((animation, i) => {
+    addAnimation(array) {
+        // We need to set the state array as a clone to avoid issues with modifying the passed in array later.
+        let clone = _.cloneDeep(array);
+        this.timerIds.push(
             setTimeout(() => {
-                animation.forEach(el => {
-                    arrayBars[el.idx].style.backgroundColor = el.color;
-                });
-            }, i / this.state.animationSpeed);
-        });
+                this.setState({ array: clone });
+            }, this.animationCount++ / this.state.animationSpeed)
+        );
     }
 
     handleArraySliderChange = value => {
-        if (value != ARRAY_SIZE) {
+        if (value !== ARRAY_SIZE) {
             ARRAY_SIZE = value;
             this.generateArray();
         }
     };
 
     handleAnimationSliderChange = value => {
-        // If called while sorting, stop animations and generate a new array
-        if (this.isSorting) {
-            this.timerIds.forEach(function(value) {
-                clearTimeout(value);
-            });
-            this.generateArray();
-        }
         this.setState({ animationSpeed: value });
     };
 
     handleDropdownChange = event => {
         this.setState({ algorithm: event.value });
-        if (this.isSorted) this.generateArray();
     };
+
+    // Called after any sorting algorithm completes and animations are pending
+    initEndSequence() {
+        this.timerIds.push(setTimeout(() => {
+            this.isSorting = false;
+            this.isSorted = true;
+        }, this.animationCount));
+    }
+
+    /* SORTING ALGORITHMS */
+
+    selectionSort() {
+        let array = this.state.array;
+
+        for (let i = 0; i < ARRAY_SIZE; i++) {
+            // Find minimum element in unsorted array
+            var min_id = i;
+            for (let j = i + 1; j < ARRAY_SIZE; j++) {
+                // Color bars being compared
+                array[min_id].color = PIVOT_COLOR;
+                array[j].color = COMP_COLOR;
+                this.addAnimation(array);
+                // Uncolor comp bars
+                array[min_id].color = START_COLOR;
+                array[j].color = START_COLOR;
+                if (array[j].value < array[min_id].value) {
+                    min_id = j;
+                }
+            }
+            // Swap min element with 1st element in unsorted array
+            array[i] = array.splice(min_id, 1, array[i])[0];
+            array[i].color = FINISH_COLOR;
+            this.addAnimation(array);
+        }
+    }
+
+    quickSortHelper() {
+        var arr = this.state.array;
+        this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
+    }
+
+    quickSortPartition(arr, low, high) {
+        var pivot = arr[high];
+        var i = low - 1;
+        for (var j = low; j < high; j++) {
+            arr[j].color = COMP_COLOR;
+            if (arr[j].value < pivot.value) {
+                i++;
+
+                if (i > 0 && i > low) arr[i - 1].color = START_COLOR;
+                arr[i].color = COMP_COLOR;
+
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            this.addAnimation(arr);
+            arr[j].color = PIVOT_COLOR;
+        }
+        [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
+
+        // Recolor all bars that were partitioned around the pivot
+        if (i > 0 && i > low) arr[i].color = START_COLOR;
+        for (let j = i+2; j <= high; j++) {
+            arr[j].color = START_COLOR;
+        }
+        // arr[i+1] is now in sorted position
+        arr[i+1].color = FINISH_COLOR;
+        this.addAnimation(arr);
+
+        return i + 1;
+    }
+
+    quickSort(arr, low, high) {
+        if (low <= high) {
+            var pi = this.quickSortPartition(arr, low, high);
+            this.quickSort(arr, low, pi - 1);
+            this.quickSort(arr, pi + 1, high);
+        }
+    }
+
+    bubbleSort() {
+        let array = this.state.array;
+
+        for (let i = 0; i < ARRAY_SIZE - 1; i++) {
+            for (let j = 0; j < ARRAY_SIZE - i - 1; j++) {
+                // Swap elements j and j+1 if needed
+                if (array[j].value > array[j + 1].value) {
+                    array[j] = array.splice(j + 1, 1, array[j])[0];
+                }
+
+                // Change bars to comp color
+                array[j].color = COMP_COLOR;
+                if (j + 1 === ARRAY_SIZE - i - 1) {
+                    array[j + 1].color = FINISH_COLOR;
+                } else {
+                    array[j + 1].color = COMP_COLOR;
+                }
+
+                this.addAnimation(array);
+
+                // Change bars back to start color after done comparing
+                array[j].color = START_COLOR;
+                if (j + 1 < ARRAY_SIZE - i - 1) {
+                    array[j + 1].color = START_COLOR;
+                }
+
+                // Edge case for after every element has been sorted
+                if (i === ARRAY_SIZE - 2) {
+                    array[0].color = FINISH_COLOR;
+                    this.addAnimation(array);
+                }
+            }
+        }
+    }
 
     render() {
         const dropdownOptions = [
@@ -278,12 +226,10 @@ class Visualizer extends React.Component {
                         <li>
                             <button
                                 onClick={() => {
-                                    // If already sorting, do nothing
-                                    /*  if (this.isSorting) {
+                                    if (this.isSorting || this.isSorted) {
                                         return;
-                                    } else {
-                                        this.isSorting = true;
-                                    } */
+                                    }
+                                    this.isSorting = true;
                                     switch (this.state.algorithm) {
                                         case "selection":
                                             this.selectionSort();
@@ -296,6 +242,7 @@ class Visualizer extends React.Component {
                                             break;
                                         default:
                                     }
+                                    this.initEndSequence();
                                 }}
                             >
                                 Sort
