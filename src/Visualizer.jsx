@@ -68,9 +68,11 @@ class Visualizer extends React.Component {
     }
 
     addAnimation(array) {
-        // If code is still running, wait half a second before queueing animations
+        // If code is still executing, wait half a second before trying to queue animations
         if (this.isComputing) {
-            setTimeout(() => {}, 500);
+            _.debounce(() => {
+                this.addAnimation(array);
+            }, 500);
         }
         // We need to set the state array as a clone to avoid issues with modifying the passed in array later.
         let clone = _.cloneDeep(array);
