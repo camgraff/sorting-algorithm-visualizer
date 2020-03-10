@@ -25,6 +25,7 @@ class Visualizer extends React.Component {
 
         this.isSorted = false;
         this.isSorting = false;
+        this.isComputing = false;
         // Timer Ids used to cancel sorting animation
         this.timerIds = [];
         this.animationCount = 0;
@@ -57,13 +58,20 @@ class Visualizer extends React.Component {
             });
         }
         this.isSorted = false;
+        // Keeps track of whether sorting animations are still running
         this.isSorting = false;
+        // Keeps track of whether the actual sorting algorithm code is still executing
+        this.isComputing = false;
         this.setState({
             array: arr
         });
     }
 
     addAnimation(array) {
+        // If code is still running, wait half a second before queueing animations
+        if (this.isComputing) {
+            setTimeout(() => {}, 500);
+        }
         // We need to set the state array as a clone to avoid issues with modifying the passed in array later.
         let clone = _.cloneDeep(array);
         this.timerIds.push(
@@ -90,6 +98,7 @@ class Visualizer extends React.Component {
 
     // Called after any sorting algorithm completes and animations are pending
     initEndSequence() {
+        this.isComputing = false;
         this.timerIds.push(setTimeout(() => {
             this.isSorting = false;
             this.isSorted = true;
@@ -230,6 +239,7 @@ class Visualizer extends React.Component {
                                         return;
                                     }
                                     this.isSorting = true;
+                                    this.isComputing = true;
                                     switch (this.state.algorithm) {
                                         case "selection":
                                             this.selectionSort();
