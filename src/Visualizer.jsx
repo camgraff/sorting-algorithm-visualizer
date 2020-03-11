@@ -25,10 +25,9 @@ class Visualizer extends React.Component {
 
         this.isSorted = false;
         this.isSorting = false;
-        this.isComputing = false;
         // Timer Ids used to cancel sorting animation
         this.timerIds = [];
-        this.animationCount = 0;
+        this.animations = [];
 
         this.state = {
             array: [],
@@ -47,7 +46,9 @@ class Visualizer extends React.Component {
             clearTimeout(value);
         });
         this.timerIds = [];
-        this.animationCount = 0;
+        this.animations = [];
+        this.isSorted = false;
+        this.isSorting = false;
 
         // Populate the array
         let arr = [];
@@ -57,30 +58,38 @@ class Visualizer extends React.Component {
                 color: START_COLOR
             });
         }
-        this.isSorted = false;
-        // Keeps track of whether sorting animations are still running
-        this.isSorting = false;
-        // Keeps track of whether the actual sorting algorithm code is still executing
-        this.isComputing = false;
         this.setState({
             array: arr
         });
     }
 
     addAnimation(array) {
-        // If code is still executing, wait half a second before trying to queue animations
-        if (this.isComputing) {
-            _.debounce(() => {
-                this.addAnimation(array);
-            }, 500);
+        // cloneDeep is necessary since the array is made up of objects
+        this.animations.push(_.cloneDeep(array));
+    }
+
+    runAnimations() {
+        var count = 0;
+        while (this.animations.length > 0) {
+            let arr = this.animations.shift();
+            this.timerIds.push(
+                setTimeout(() => {
+                    this.setState({ array: arr });
+                }, count++ / this.state.animationSpeed)
+            );
         }
-        // We need to set the state array as a clone to avoid issues with modifying the passed in array later.
-        let clone = _.cloneDeep(array);
+        // Cleanup after all animations have finished
         this.timerIds.push(
             setTimeout(() => {
-                this.setState({ array: clone });
-            }, this.animationCount++ / this.state.animationSpeed)
+                this.isSorting = false;
+                this.isSorted = true;
+            }, count / this.animationCount)
         );
+    }
+
+    // Called after any sorting algorithm completes and animations are pending
+    initEndSequence() {
+        this.runAnimations();
     }
 
     handleArraySliderChange = value => {
@@ -97,15 +106,6 @@ class Visualizer extends React.Component {
     handleDropdownChange = event => {
         this.setState({ algorithm: event.value });
     };
-
-    // Called after any sorting algorithm completes and animations are pending
-    initEndSequence() {
-        this.isComputing = false;
-        this.timerIds.push(setTimeout(() => {
-            this.isSorting = false;
-            this.isSorted = true;
-        }, this.animationCount));
-    }
 
     /* SORTING ALGORITHMS */
 
@@ -159,11 +159,11 @@ class Visualizer extends React.Component {
 
         // Recolor all bars that were partitioned around the pivot
         if (i > 0 && i > low) arr[i].color = START_COLOR;
-        for (let j = i+2; j <= high; j++) {
+        for (let j = i + 2; j <= high; j++) {
             arr[j].color = START_COLOR;
         }
         // arr[i+1] is now in sorted position
-        arr[i+1].color = FINISH_COLOR;
+        arr[i + 1].color = FINISH_COLOR;
         this.addAnimation(arr);
 
         return i + 1;
@@ -241,7 +241,6 @@ class Visualizer extends React.Component {
                                         return;
                                     }
                                     this.isSorting = true;
-                                    this.isComputing = true;
                                     switch (this.state.algorithm) {
                                         case "selection":
                                             this.selectionSort();
