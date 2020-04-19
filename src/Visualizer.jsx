@@ -23,15 +23,11 @@ class Visualizer extends React.Component {
     constructor(props) {
         super(props);
 
-        this.isSorted = false;
         this.isSorting = false;
-        // Timer Ids used to cancel sorting animation
-        this.timerIds = [];
-        this.animations = [];
 
         this.state = {
             array: [],
-            animationSpeed: 0.1,
+            animationSpeed: 0.5,
             algorithm: ""
         };
     }
@@ -41,14 +37,9 @@ class Visualizer extends React.Component {
     }
 
     generateArray() {
-        // Stop any animations currently running
-        this.timerIds.forEach(function(value) {
-            clearTimeout(value);
-        });
-        this.timerIds = [];
-        this.animations = [];
-        this.isSorted = false;
-        this.isSorting = false;
+        if (this.isSorting) {
+            return;
+        }
 
         // Populate the array
         let arr = [];
@@ -65,34 +56,23 @@ class Visualizer extends React.Component {
 
     addAnimation(array) {
         // cloneDeep is necessary since the array is made up of objects
-        this.animations.push(_.cloneDeep(array));
-    }
-
-    runAnimations() {
-        var count = 0;
-        while (this.animations.length > 0) {
-            let arr = this.animations.shift();
-            this.timerIds.push(
-                setTimeout(() => {
-                    this.setState({ array: arr });
-                }, count++ / this.state.animationSpeed)
-            );
-        }
-        // Cleanup after all animations have finished
-        this.timerIds.push(
+        return new Promise(resolve => {
+            const arr = _.cloneDeep(array);
             setTimeout(() => {
-                this.isSorting = false;
-                this.isSorted = true;
-            }, count / this.animationCount)
-        );
+                this.setState({ array: arr });
+                resolve();
+            }, 1.0 / this.state.animationSpeed);
+        });
     }
 
-    // Called after any sorting algorithm completes and animations are pending
     initEndSequence() {
-        this.runAnimations();
+        this.isSorting = true;
     }
 
     handleArraySliderChange = value => {
+        if (this.isSorting) {
+            return;
+        }
         if (value !== ARRAY_SIZE) {
             ARRAY_SIZE = value;
             this.generateArray();
@@ -109,7 +89,7 @@ class Visualizer extends React.Component {
 
     /* SORTING ALGORITHMS */
 
-    selectionSort() {
+    async selectionSort() {
         let array = this.state.array;
 
         for (let i = 0; i < ARRAY_SIZE; i++) {
@@ -119,7 +99,7 @@ class Visualizer extends React.Component {
                 // Color bars being compared
                 array[min_id].color = PIVOT_COLOR;
                 array[j].color = COMP_COLOR;
-                this.addAnimation(array);
+                await this.addAnimation(array);
                 // Uncolor comp bars
                 array[min_id].color = START_COLOR;
                 array[j].color = START_COLOR;
@@ -130,7 +110,7 @@ class Visualizer extends React.Component {
             // Swap min element with 1st element in unsorted array
             array[i] = array.splice(min_id, 1, array[i])[0];
             array[i].color = FINISH_COLOR;
-            this.addAnimation(array);
+            await this.addAnimation(array);
         }
     }
 
@@ -139,7 +119,7 @@ class Visualizer extends React.Component {
         this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
     }
 
-    quickSortPartition(arr, low, high) {
+    async quickSortPartition(arr, low, high) {
         var pivot = arr[high];
         var i = low - 1;
         for (var j = low; j < high; j++) {
@@ -152,7 +132,7 @@ class Visualizer extends React.Component {
 
                 [arr[i], arr[j]] = [arr[j], arr[i]];
             }
-            this.addAnimation(arr);
+            await this.addAnimation(arr);
             arr[j].color = PIVOT_COLOR;
         }
         [arr[i + 1], arr[high]] = [arr[high], arr[i + 1]];
@@ -164,20 +144,20 @@ class Visualizer extends React.Component {
         }
         // arr[i+1] is now in sorted position
         arr[i + 1].color = FINISH_COLOR;
-        this.addAnimation(arr);
+        await this.addAnimation(arr);
 
         return i + 1;
     }
 
-    quickSort(arr, low, high) {
+    async quickSort(arr, low, high) {
         if (low <= high) {
-            var pi = this.quickSortPartition(arr, low, high);
-            this.quickSort(arr, low, pi - 1);
-            this.quickSort(arr, pi + 1, high);
+            var pi = await this.quickSortPartition(arr, low, high);
+            await this.quickSort(arr, low, pi - 1);
+            await this.quickSort(arr, pi + 1, high);
         }
     }
 
-    bubbleSort() {
+    async bubbleSort() {
         let array = this.state.array;
 
         for (let i = 0; i < ARRAY_SIZE - 1; i++) {
@@ -195,7 +175,7 @@ class Visualizer extends React.Component {
                     array[j + 1].color = COMP_COLOR;
                 }
 
-                this.addAnimation(array);
+                await this.addAnimation(array);
 
                 // Change bars back to start color after done comparing
                 array[j].color = START_COLOR;
@@ -206,7 +186,7 @@ class Visualizer extends React.Component {
                 // Edge case for after every element has been sorted
                 if (i === ARRAY_SIZE - 2) {
                     array[0].color = FINISH_COLOR;
-                    this.addAnimation(array);
+                    await this.addAnimation(array);
                 }
             }
         }
@@ -229,15 +209,16 @@ class Visualizer extends React.Component {
                         </li>
                         <li className="slider">
                             Animation Speed
-                            <Slider min={0.01} max={0.2} step={0.001} format={value => Math.floor(value * 1000)} value={this.state.animationSpeed} orientation="horizontal" onChange={this.handleAnimationSliderChange} tooltip={false} />
+                            <Slider min={0.01} max={1} step={0.01} format={value => Math.floor(value * 1000)} value={this.state.animationSpeed} orientation="horizontal" onChange={this.handleAnimationSliderChange} tooltip={false} />
                         </li>
                         <li className="dropdown">
                             <Dropdown value={this.state.algorithm} ref="algorithm" options={dropdownOptions} placeholder="Select a sorting algorithm" onChange={this.handleDropdownChange} />
                         </li>
                         <li>
                             <button
+                            disabled={this.isSorting}
                                 onClick={() => {
-                                    if (this.isSorting || this.isSorted) {
+                                    if (this.isSorting) {
                                         return;
                                     }
                                     this.isSorting = true;
@@ -260,7 +241,7 @@ class Visualizer extends React.Component {
                             </button>
                         </li>
                         <li>
-                            <button onClick={() => this.generateArray()}>Generate New Array</button>
+                            <button disabled={this.isSorting} onClick={() => this.generateArray()}>Generate New Array</button>
                         </li>
                         <li>
                             <a href="https://github.com/camgraff/sorting-algorithm-visualizer" id="gh-link">

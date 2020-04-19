@@ -28,6 +28,10 @@
                     &:hover {
                         color: lightgray;
                     }
+                    &:disabled {
+                        color: gray;
+                        cursor: default;
+                    }
                 }
                 &.dropdown {
                     cursor: pointer;
