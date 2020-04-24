@@ -23,12 +23,11 @@ class Visualizer extends React.Component {
     constructor(props) {
         super(props);
 
-        this.isSorting = false;
-
         this.state = {
             array: [],
             animationSpeed: 0.5,
-            algorithm: ""
+            algorithm: "",
+            isSorting: false
         };
     }
 
@@ -37,7 +36,7 @@ class Visualizer extends React.Component {
     }
 
     generateArray() {
-        if (this.isSorting) {
+        if (this.state.isSorting) {
             return;
         }
 
@@ -65,12 +64,35 @@ class Visualizer extends React.Component {
         });
     }
 
+    async doSorting() {
+        if (this.state.isSorting) {
+            return;
+        }
+        this.setState({
+            isSorting: true
+        });
+        switch (this.state.algorithm) {
+            case "selection":
+                await this.selectionSort();
+                break;
+            case "quick":
+                await this.quickSortHelper();
+                break;
+            case "bubble":
+                await this.bubbleSort();
+                break;
+            default:
+        }
+    }
+
     initEndSequence() {
-        this.isSorting = true;
+        this.setState({
+            isSorting: false
+        });
     }
 
     handleArraySliderChange = value => {
-        if (this.isSorting) {
+        if (this.state.isSorting) {
             return;
         }
         if (value !== ARRAY_SIZE) {
@@ -114,9 +136,9 @@ class Visualizer extends React.Component {
         }
     }
 
-    quickSortHelper() {
+    async quickSortHelper() {
         var arr = this.state.array;
-        this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
+        await this.quickSort(arr, 0, ARRAY_SIZE - 1, 0);
     }
 
     async quickSortPartition(arr, low, high) {
@@ -216,32 +238,18 @@ class Visualizer extends React.Component {
                         </li>
                         <li>
                             <button
-                            disabled={this.isSorting}
+                            disabled={this.state.isSorting}
                                 onClick={() => {
-                                    if (this.isSorting) {
-                                        return;
-                                    }
-                                    this.isSorting = true;
-                                    switch (this.state.algorithm) {
-                                        case "selection":
-                                            this.selectionSort();
-                                            break;
-                                        case "quick":
-                                            this.quickSortHelper();
-                                            break;
-                                        case "bubble":
-                                            this.bubbleSort();
-                                            break;
-                                        default:
-                                    }
-                                    this.initEndSequence();
+                                    this.doSorting().then(() => {
+                                        this.initEndSequence();
+                                    });
                                 }}
                             >
                                 Sort
                             </button>
                         </li>
                         <li>
-                            <button disabled={this.isSorting} onClick={() => this.generateArray()}>Generate New Array</button>
+                            <button disabled={this.state.isSorting} onClick={() => this.generateArray()}>Generate New Array</button>
                         </li>
                         <li>
                             <a href="https://github.com/camgraff/sorting-algorithm-visualizer" id="gh-link">
@@ -272,6 +280,7 @@ class Visualizer extends React.Component {
             </div>
         );
     }
+
 }
 
 export default Visualizer;
